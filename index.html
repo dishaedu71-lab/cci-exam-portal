@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCI Exam Portal Final</title>
+<style>
+body{margin:0;font-family:Arial;background:linear-gradient(-45deg,#0d47a1,#1976d2,#42a5f5,#64b5f6);background-size:400% 400%;animation:bg 12s infinite}
+@keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.card{max-width:1000px;margin:20px auto;background:#fff;border-radius:15px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+h1{text-align:center;color:#0d47a1}
+.btn{background:#0d47a1;color:#fff;border:none;padding:10px 15px;border-radius:6px;cursor:pointer}
+.btn:hover{transform:scale(1.05)}
+input,textarea,select{width:100%;padding:10px;margin:5px 0}
+.hidden{display:none}
+.exam{display:flex}
+.left{flex:3;padding:15px}
+.right{flex:1;background:#f0f4ff;padding:15px}
+.palette button{margin:3px;padding:8px}
+.done{background:green;color:#fff}
+
+.hero-card{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:15px}
+.course-item{background:#fff;padding:12px;border-radius:10px;text-align:center;transition:.3s}
+.course-item:hover{transform:translateY(-5px)}
+</style>
+</head>
+<body>
+
+<div id="home" class="card">
+<div style="text-align:center;padding:10px">
+<h2 style="color:#ff9800">🚀 India's Professional Online Exam Portal</h2>
+<div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin:15px 0">
+<div style="background:#e3f2fd;padding:10px 20px;border-radius:10px">5000+ Students</div>
+<div style="background:#e8f5e9;padding:10px 20px;border-radius:10px">150+ Mock Tests</div>
+<div style="background:#fff3e0;padding:10px 20px;border-radius:10px">50,000+ Questions</div>
+</div>
+<marquee>🔥 O Level | CCC | Python | Tally | Excel | Cyber Security | AI & Data Science 🔥</marquee>
+</div>
+<h1>CCI Exam Portal</h1>
+<h3 align="center">Cybersecurity Computer Institution</h3>
+<p align="center">By Er. Adarsh Mishra</p>
+<div id="noticeArea"></div>
+<input id="studentName" placeholder="Enter Student Name">
+<button class="btn" onclick="startExam()">Start Exam</button>
+<button class="btn" onclick="showAdmin()">Admin Login</button>
+<div class="course-grid">
+<div class="course-item">O Level</div>
+<div class="course-item">CCC</div>
+<div class="course-item">Python</div>
+<div class="course-item">Tally</div>
+<div class="course-item">Excel</div>
+<div class="course-item">Cyber Security</div>
+</div>
+</div>
+
+<div id="adminLogin" class="card hidden">
+<h2>Admin Login</h2>
+<input id="au" placeholder="Username">
+<input id="ap" type="password" placeholder="Password">
+<button class="btn" onclick="adminLogin()">Login</button>
+<p>Username: admin | Password: CCI@2026</p>
+</div>
+
+<div id="adminPanel" class="card hidden">
+<h2>Admin Dashboard</h2>
+<h3>Notice</h3>
+<textarea id="notice"></textarea>
+<button class="btn" onclick="saveNotice()">Publish Notice</button>
+
+<h3>Add Question</h3>
+<select id="course"><option>Python</option><option>CCC</option><option>O Level</option></select>
+<input id="q" placeholder="Question">
+<input id="o1" placeholder="Option 1">
+<input id="o2" placeholder="Option 2">
+<input id="o3" placeholder="Option 3">
+<input id="o4" placeholder="Option 4">
+<input id="ans" placeholder="Correct Option Number (0-3)">
+<button class="btn" onclick="addQuestion()">Add Question</button>
+
+<h3>Question Bank</h3>
+<div id="qlist"></div>
+</div>
+
+<div id="examPage" class="card hidden">
+<div style="display:flex;justify-content:space-between">
+<h2>Mock Test</h2>
+<h2>Time Left: <span id="timer">30:00</span></h2>
+</div>
+<div class="exam">
+<div class="left">
+<h3 id="qno"></h3>
+<div id="question"></div>
+<div id="options"></div>
+<button class="btn" onclick="prevQ()">Previous</button>
+<button class="btn" onclick="nextQ()">Next</button>
+<button class="btn" onclick="submitExam()">Submit</button>
+</div>
+<div class="right">
+<h3>Question Palette</h3>
+<div id="palette" class="palette"></div>
+</div>
+</div>
+</div>
+
+<script>
+let questions=JSON.parse(localStorage.getItem('cci_questions')||'[]');
+if(questions.length===0){
+questions=[{q:'What is Python?',o:['Programming Language','OS','Browser','Device'],a:0}];
+}
+let current=0,answers={};
+
+document.getElementById('noticeArea').innerHTML='<b>Notice:</b> '+(localStorage.getItem('cci_notice')||'Welcome to CCI Exam Portal');
+
+function showAdmin(){
+document.getElementById('home').classList.add('hidden');
+document.getElementById('adminLogin').classList.remove('hidden');
+}
+
+function adminLogin(){
+let user=document.getElementById('au').value;
+let pass=document.getElementById('ap').value;
+if(user==='admin' && pass==='CCI@2026'){
+document.getElementById('adminLogin').classList.add('hidden');
+document.getElementById('adminPanel').classList.remove('hidden');
+renderQuestions();
+}else alert('Wrong Login');
+}
+
+function saveNotice(){
+localStorage.setItem('cci_notice',notice.value);
+alert('Notice Saved');
+}
+
+function addQuestion(){
+questions.push({q:q.value,o:[o1.value,o2.value,o3.value,o4.value],a:parseInt(ans.value||0),course:course.value});
+localStorage.setItem('cci_questions',JSON.stringify(questions));
+renderQuestions();
+}
+
+function renderQuestions(){
+const qlist=document.getElementById('qlist');
+qlist.innerHTML='';
+questions.forEach((x,i)=>{
+qlist.innerHTML+=`<p>${i+1}. ${x.q} <button onclick="delQ(${i})">Delete</button></p>`;
+});
+}
+
+function delQ(i){
+questions.splice(i,1);
+localStorage.setItem('cci_questions',JSON.stringify(questions));
+renderQuestions();
+}
+
+function startExam(){
+document.getElementById('home').classList.add('hidden');
+document.getElementById('examPage').classList.remove('hidden');
+loadPalette(); showQ();
+}
+
+function loadPalette(){
+const palette=document.getElementById('palette');
+palette.innerHTML='';
+questions.forEach((q,i)=>{
+let b=document.createElement('button');
+b.innerText=i+1;
+b.id='p'+i;
+b.onclick=()=>{current=i;showQ();};
+palette.appendChild(b);
+});
+}
+
+function showQ(){
+let q=questions[current];
+qno.innerText='Question '+(current+1)+' of '+questions.length;
+question.innerHTML='<h3>'+q.q+'</h3>';
+options.innerHTML='';
+q.o.forEach((op,i)=>{
+options.innerHTML+=`<p><input type='radio' name='a' ${(answers[current]==i)?'checked':''} onclick='answers[${current}]=${i};mark(${current})'> ${op}</p>`;
+});
+}
+
+function mark(i){document.getElementById('p'+i).classList.add('done');}
+function nextQ(){if(current<questions.length-1){current++;showQ();}}
+function prevQ(){if(current>0){current--;showQ();}}
+
+function submitExam(){
+let score=0;
+questions.forEach((q,i)=>{if(answers[i]==q.a)score++;});
+let p=((score/questions.length)*100).toFixed(2);
+document.body.innerHTML=`<div class='card'><h1>Result</h1><h2>Score ${score}/${questions.length}</h2><h2>${p}%</h2><button class='btn' onclick='window.print()'>Print Result</button></div>`;
+}
+
+let t=1800;
+setInterval(()=>{
+if(!examPage.classList.contains('hidden')){
+t--;
+let m=Math.floor(t/60),s=t%60;
+timer.innerText=m+':'+String(s).padStart(2,'0');
+if(t<=0) submitExam();
+}
+},1000);
+</script>
+</body>
+</html>
