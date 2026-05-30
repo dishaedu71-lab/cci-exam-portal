@@ -85,7 +85,7 @@ input,textarea,select{width:100%;padding:10px;margin:5px 0}
 <div id="examPage" class="card hidden">
 <div style="display:flex;justify-content:space-between">
 <h2>Mock Test</h2>
-<h2>Time Left: <span id="timer">30:00</span></h2>
+<h2>Time Left: <span id="timer">90:00</span></h2>
 </div>
 <div class="exam">
 <div class="left">
@@ -191,7 +191,7 @@ let p=((score/questions.length)*100).toFixed(2);
 document.body.innerHTML=`<div class='card'><h1>Result</h1><h2>Score ${score}/${questions.length}</h2><h2>${p}%</h2><button class='btn' onclick='window.print()'>Print Result</button></div>`;
 }
 
-let t=1800;
+let t=5400;
 setInterval(()=>{
 if(!examPage.classList.contains('hidden')){
 t--;
