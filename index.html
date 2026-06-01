@@ -136,7 +136,7 @@ questions=[{q:'What is Python?',o:['Programming Language','OS','Browser','Device
 let current=0,answers={};
 
 document.getElementById('noticeArea').innerHTML='<b>Notice:</b> '+(localStorage.getItem('cci_notice')||'Welcome to CCI Exam Portal');
-  loadQuestionsFromFirebase();
+
 
 function showAdmin(){
 document.getElementById('home').classList.add('hidden');
@@ -272,6 +272,7 @@ window.firebaseDb=db;
 window.saveQuestionOnline = async function(data){
  await push(ref(db,"questions"),data);
 };
+  loadQuestionsFromFirebase();
 </script>
 
 </body>
