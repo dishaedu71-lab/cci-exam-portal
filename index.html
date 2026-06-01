@@ -105,12 +105,38 @@ input,textarea,select{width:100%;padding:10px;margin:5px 0}
 
 <script>
 let questions=JSON.parse(localStorage.getItem('cci_questions')||'[]');
+
+  async function loadQuestionsFromFirebase(){
+
+if(!window.firebaseDb) return;
+
+const { ref, get } = await import(
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+);
+
+const snap = await get(ref(window.firebaseDb,"questions"));
+
+if(snap.exists()){
+
+questions=[];
+
+Object.values(snap.val()).forEach(q=>{
+questions.push(q);
+});
+
+renderQuestions();
+
+}
+
+}
+  
 if(questions.length===0){
 questions=[{q:'What is Python?',o:['Programming Language','OS','Browser','Device'],a:0}];
 }
 let current=0,answers={};
 
 document.getElementById('noticeArea').innerHTML='<b>Notice:</b> '+(localStorage.getItem('cci_notice')||'Welcome to CCI Exam Portal');
+  loadQuestionsFromFirebase();
 
 function showAdmin(){
 document.getElementById('home').classList.add('hidden');
@@ -242,7 +268,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
+window.firebaseDb=db;
 window.saveQuestionOnline = async function(data){
  await push(ref(db,"questions"),data);
 };
