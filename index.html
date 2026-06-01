@@ -120,8 +120,19 @@ if(snap.exists()){
 
 questions=[];
 
-Object.values(snap.val()).forEach(q=>{
-questions.push(q);
+Object.values(snap.val()).forEach(item=>{
+
+questions.push({
+q:item.question,
+o:[
+item.option1,
+item.option2,
+item.option3,
+item.option4
+],
+a:parseInt(item.answer)
+});
+
 });
 
 renderQuestions();
