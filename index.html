@@ -295,6 +295,20 @@ window.saveNoticeOnline = async function(text){
   message:text
  });
 };
+  async function loadNoticeFromFirebase(){
+
+const snap = await get(ref(db,"notice"));
+
+if(snap.exists()){
+
+const data = snap.val();
+
+document.getElementById("noticeArea").innerHTML =
+"<b>Notice:</b> " + data.message;
+
+}
+
+}
   loadQuestionsFromFirebase();
   loadNoticeFromFirebase();
 </script>
