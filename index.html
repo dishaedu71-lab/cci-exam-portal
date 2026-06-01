@@ -132,10 +132,35 @@ localStorage.setItem('cci_notice',notice.value);
 alert('Notice Saved');
 }
 
-function addQuestion(){
-questions.push({q:q.value,o:[o1.value,o2.value,o3.value,o4.value],a:parseInt(ans.value||0),course:course.value});
+async function addQuestion(){
+
+const newQ = {
+q:q.value,
+o:[o1.value,o2.value,o3.value,o4.value],
+a:parseInt(ans.value||0),
+course:course.value
+};
+
+questions.push(newQ);
+
 localStorage.setItem('cci_questions',JSON.stringify(questions));
+
+if(window.saveQuestionOnline){
+await saveQuestionOnline({
+course:course.value,
+question:q.value,
+option1:o1.value,
+option2:o2.value,
+option3:o3.value,
+option4:o4.value,
+answer:ans.value
+});
+}
+
 renderQuestions();
+
+alert("Question Saved Successfully");
+
 }
 
 function renderQuestions(){
@@ -201,5 +226,27 @@ if(t<=0) submitExam();
 }
 },1000);
 </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDX63HCdKPo4Np0GETmzZXdU5gXDj5Tnxs",
+  authDomain: "cci-exam-portal-a00a1.firebaseapp.com",
+  databaseURL: "https://cci-exam-portal-a00a1-default-rtdb.firebaseio.com",
+  projectId: "cci-exam-portal-a00a1",
+  storageBucket: "cci-exam-portal-a00a1.firebasestorage.app",
+  messagingSenderId: "1097283611380",
+  appId: "1:1097283611380:web:6ca28a9d7b9904efbe0ca1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.saveQuestionOnline = async function(data){
+ await push(ref(db,"questions"),data);
+};
+</script>
+
 </body>
 </html>
