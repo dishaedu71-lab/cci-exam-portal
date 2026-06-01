@@ -153,9 +153,16 @@ renderQuestions();
 }else alert('Wrong Login');
 }
 
-function saveNotice(){
+async function saveNotice(){
+
 localStorage.setItem('cci_notice',notice.value);
-alert('Notice Saved');
+
+if(window.saveNoticeOnline){
+await saveNoticeOnline(notice.value);
+}
+
+alert('Notice Saved Online');
+
 }
 
 async function addQuestion(){
@@ -254,7 +261,7 @@ if(t<=0) submitExam();
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, push, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX63HCdKPo4Np0GETmzZXdU5gXDj5Tnxs",
@@ -272,7 +279,13 @@ window.firebaseDb=db;
 window.saveQuestionOnline = async function(data){
  await push(ref(db,"questions"),data);
 };
+window.saveNoticeOnline = async function(text){
+ await set(ref(db,"notice"),{
+  message:text
+ });
+};
   loadQuestionsFromFirebase();
+  loadNoticeFromFirebase();
 </script>
 
 </body>
