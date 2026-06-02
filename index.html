@@ -74,7 +74,7 @@ input,textarea,select{width:100%;padding:10px;margin:5px 0}
 <input id="o2" placeholder="Option 2">
 <input id="o3" placeholder="Option 3">
 <input id="o4" placeholder="Option 4">
-<input id="ans" placeholder="Correct Option Number (0-3)">
+<input id="ans" placeholder="Correct Option Number (1-4)">
 <button class="btn" onclick="addQuestion()">Add Question</button>
 
 <h3>Question Bank</h3>
@@ -180,7 +180,7 @@ async function addQuestion(){
 const newQ = {
 q:q.value,
 o:[o1.value,o2.value,o3.value,o4.value],
-a:parseInt(ans.value||0),
+a:parseInt(ans.value||1)-1,
 course:course.value
 };
 
@@ -196,7 +196,7 @@ option1:o1.value,
 option2:o2.value,
 option3:o3.value,
 option4:o4.value,
-answer:ans.value
+answer:parseInt(ans.value)-1
 });
 }
 
