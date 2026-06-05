@@ -227,20 +227,6 @@ renderQuestions();
 
 async function startExam(){
 
-let code=document.getElementById("studentCode").value;
-
-let snap=await get(ref(window.firebaseDb,"examCode"));
-
-if(!snap.exists()){
-alert("Exam Code Not Set");
-return;
-}
-
-if(code!==snap.val().code){
-alert("Wrong Exam Code");
-return;
-}
-
 document.getElementById('home').classList.add('hidden');
 document.getElementById('examPage').classList.remove('hidden');
 
