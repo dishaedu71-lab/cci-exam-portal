@@ -316,6 +316,12 @@ window.saveNoticeOnline = async function(text){
   message:text
  });
 };
+  window.saveExamCodeOnline = async function(code){
+await set(ref(db,"examCode"),{
+code:code
+});
+};
+  
   async function loadNoticeFromFirebase(){
 
 const snap = await get(ref(db,"notice"));
