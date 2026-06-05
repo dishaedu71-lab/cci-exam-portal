@@ -42,6 +42,7 @@ input,textarea,select{width:100%;padding:10px;margin:5px 0}
 <p align="center">By Er. Adarsh Mishra</p>
 <div id="noticeArea"></div>
 <input id="studentName" placeholder="Enter Student Name">
+<input id="examCodeInput" placeholder="Enter Exam Code">
 <button class="btn" onclick="startExam()">Start Exam</button>
 <button class="btn" onclick="showAdmin()">Admin Login</button>
 <div class="course-grid">
@@ -66,6 +67,10 @@ input,textarea,select{width:100%;padding:10px;margin:5px 0}
 <h3>Notice</h3>
 <textarea id="notice"></textarea>
 <button class="btn" onclick="saveNotice()">Publish Notice</button>
+  
+  <h3>Exam Code</h3>
+<input id="examCode" placeholder="Enter Exam Code">
+<button class="btn" onclick="saveExamCode()">Save Exam Code</button>
 
 <h3>Add Question</h3>
 <select id="course"><option>Python</option><option>CCC</option><option>O Level</option></select>
@@ -220,12 +225,29 @@ localStorage.setItem('cci_questions',JSON.stringify(questions));
 renderQuestions();
 }
 
-function startExam(){
-document.getElementById('home').classList.add('hidden');
-document.getElementById('examPage').classList.remove('hidden');
-loadPalette(); showQ();
+async function startExam(){
+
+let code=document.getElementById("studentCode").value;
+
+let snap=await get(ref(window.firebaseDb,"examCode"));
+
+if(!snap.exists()){
+alert("Exam Code Not Set");
+return;
 }
 
+if(code!==snap.val().code){
+alert("Wrong Exam Code");
+return;
+}
+
+document.getElementById('home').classList.add('hidden');
+document.getElementById('examPage').classList.remove('hidden');
+
+loadPalette();
+showQ();
+}
+  
 function loadPalette(){
 const palette=document.getElementById('palette');
 palette.innerHTML='';
